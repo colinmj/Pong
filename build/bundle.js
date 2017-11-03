@@ -125,6 +125,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Game = function () {
 	function Game(element, width, height) {
+		var _this = this;
+
 		_classCallCheck(this, Game);
 
 		this.element = element;
@@ -143,11 +145,20 @@ var Game = function () {
 		this.two = new _Paddle2.default(this.height, this.paddleWidth, this.paddleHeight, this.width - this.boardGap - this.paddleWidth, this.height / 2 - 28, _settings.KEYS.up, _settings.KEYS.down);
 
 		this.ball = new _Ball2.default(10, this.width, this.height);
+
+		document.addEventListener('keydown', function (event) {
+			if (event.key === _settings.KEYS.spaceBar) {
+				_this.pause = !_this.pause;
+			}
+		});
 	}
 
 	_createClass(Game, [{
 		key: 'render',
 		value: function render() {
+			if (this.pause) {
+				return;
+			}
 
 			this.gameElement.innerHTML = '';
 
@@ -162,7 +173,7 @@ var Game = function () {
 			this.board.render(svg);
 			this.one.render(svg);
 			this.two.render(svg);
-			this.ball.render(svg);
+			this.ball.render(svg, this.one, this.two);
 		}
 	}]);
 
@@ -245,16 +256,95 @@ var Ball = function () {
     this.boardWidth = boardWidth;
     this.boardHeight = boardHeight;
     this.direction = 1;
+
+    this.reset();
   }
 
   _createClass(Ball, [{
+    key: 'reset',
+    value: function reset() {
+      this.x = this.boardWidth / 2;
+      this.y = this.boardHeight / 2;
+
+      this.vy = 0;
+
+      while (this.vy === 0) {
+        this.vy = Math.floor(Math.random() * 10 - 5);
+      }
+
+      this.vx = this.direction * (6 - Math.abs(this.vy));
+    }
+  }, {
+    key: 'wallCollision',
+    value: function wallCollision(one, two) {
+      var hitLeft = this.x - this.radius <= 0;
+      var hitRight = this.x + this.radius >= this.boardWidth;
+      var hitTop = this.y - this.radius <= 0;
+      var hitBottom = this.y + this.radius >= this.boardHeight;
+
+      // if (hitLeft || hitRight) {
+      //   this.vx = -this.vx;
+      // } else if (hitTop || hitBottom) {
+      //   this.vy = -this.vy;
+      // }
+
+      if (hitLeft) {
+        this.goal(two);
+      } else if (hitRight) {
+        this.goal(one);
+      } else if (hitTop || hitBottom) {
+        this.vy = -this.vy;
+      }
+    }
+  }, {
+    key: 'paddleCollision',
+    value: function paddleCollision(one, two) {
+      if (this.vx > 0) {
+        //Detect collision on right side (player 2)
+        var paddle = two.coordinates(two.x, two.y, two.width, two.height);
+        var leftX = paddle.leftX,
+            topY = paddle.topY,
+            bottomY = paddle.bottomY; //Destructure Array
+
+        if (this.x + this.radius >= leftX && this.y >= topY && this.y <= bottomY) {
+          this.vx = -this.vx;
+        }
+      } else {
+        //Detect collision on left side(player1)
+        if (this.vx < 0) {
+          var paddle1 = one.coordinates(one.x, one.y, one.width, one.height);
+          var rightX = paddle1.rightX,
+              _topY = paddle1.topY,
+              _bottomY = paddle1.bottomY;
+
+
+          if (this.x - this.radius <= rightX && this.y >= _topY && this.y <= _bottomY) {
+            this.vx = -this.vx;
+          }
+        }
+      } //closes else  
+    }
+  }, {
+    key: 'goal',
+    value: function goal(player) {
+      player.score++;
+      this.reset();
+    }
+  }, {
     key: 'render',
-    value: function render(svg) {
+    value: function render(svg, one, two) {
+
+      this.y += this.vy;
+      this.x += this.vx;
+
+      this.wallCollision(one, two);
+      this.paddleCollision(one, two);
+
       var ball = document.createElementNS(_settings.SVG_NS, 'circle');
       ball.setAttributeNS(null, 'r', this.radius);
       ball.setAttributeNS(null, 'fill', 'green');
-      ball.setAttributeNS(null, 'cx', this.boardWidth / 2);
-      ball.setAttributeNS(null, 'cy', this.boardHeight / 2);
+      ball.setAttributeNS(null, 'cx', this.x);
+      ball.setAttributeNS(null, 'cy', this.y);
       svg.appendChild(ball);
     }
   }]);
@@ -361,6 +451,15 @@ var Paddle = function () {
   }
 
   _createClass(Paddle, [{
+    key: 'coordinates',
+    value: function coordinates(x, y, width, height) {
+      var leftX = x;
+      var rightX = x + width;
+      var topY = y;
+      var bottomY = y + height;
+      return { leftX: leftX, rightX: rightX, topY: topY, bottomY: bottomY };
+    }
+  }, {
     key: 'up',
     value: function up() {
       this.y = Math.max(this.y - this.speed, 0);
