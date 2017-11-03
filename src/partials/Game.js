@@ -22,9 +22,19 @@ export default class Game {
 		this.two = new Paddle(this.height, this.paddleWidth, this.paddleHeight, (this.width - this.boardGap - this.paddleWidth), this.height/2 - 28, KEYS.up, KEYS.down);
 
 		this.ball = new Ball(10, this.width, this.height);
+
+
+		document.addEventListener('keydown', event => {
+        if (event.key === KEYS.spaceBar) {
+						this.pause = !this.pause;
+				}
+     });
 	}
 
 	render() {
+     if (this.pause){
+			 return;
+		 }
 
 		this.gameElement.innerHTML = '';
 
@@ -39,7 +49,7 @@ export default class Game {
 		this.board.render(svg);
 		this.one.render(svg);
 		this.two.render(svg);
-		this.ball.render(svg);
+		this.ball.render(svg, this.one, this.two);
 	}
 
 }
