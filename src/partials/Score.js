@@ -10,7 +10,7 @@ export default class Score {
 
 
 
-/* <text x="206" y="30" font-family="'Silkscreen Web', monotype" font-size="30" fill="white">0</text> */
+
 
 render(svg, score) {
   let text = document.createElementNS(SVG_NS, 'text');
