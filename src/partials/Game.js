@@ -31,8 +31,10 @@ export default class Game {
 		this.ball3 = new Ball(20, 'red', this.width, this.height);
 		
 		
-		this.score1 = new Score(220, 20, 30);
-		this.score2 = new Score(270, 20, 30);
+		this.score1 = new Score(220, 20, 30, '#ffffff');
+		this.score2 = new Score(270, 20, 30, '#ffffff');
+		this.winner1 = new Score(110, 50, 30, 'red');
+		this.winner2 = new Score(110, 50, 30, 'blue');
 		
 		
 		document.addEventListener('keydown', event => {
@@ -42,10 +44,14 @@ export default class Game {
 		});
 	}
 	
+	
+	
 	render() {
 		if (this.pause){
 			return;
 		}
+		
+		
 		
 		this.gameElement.innerHTML = '';
 		
@@ -71,6 +77,28 @@ export default class Game {
 		if (this.two.score > 3 && this.two.score < 7){
 			this.ball3.render(svg, this.one, this.two);
 		}
+		
+		
+		
+		if (this.one.score === 10){
+			this.one.score = 0;
+			this.two.score = 0;
+			this.winner1.render(svg, 'Winner: Player 1');
+			this.pause = true;
+			this.one = new Paddle(this.height, this.paddleWidth, this.paddleHeight, this.boardGap, this.height/2 - 28, KEYS.a, KEYS.z);
+			this.two = new Paddle(this.height, this.paddleWidth, this.paddleHeight, (this.width - this.boardGap - this.paddleWidth), this.height/2 - 28, KEYS.up, KEYS.down);
+		} else if (this.two.score === 10){
+			this.one.score = 0;
+			this.two.score = 0;
+			this.winner2.render(svg, 'Winner: Player 2');
+			this.pause = true;
+			this.one = new Paddle(this.height, this.paddleWidth, this.paddleHeight, this.boardGap, this.height/2 - 28, KEYS.a, KEYS.z);
+			this.two = new Paddle(this.height, this.paddleWidth, this.paddleHeight, (this.width - this.boardGap - this.paddleWidth), this.height/2 - 28, KEYS.up, KEYS.down);
+		}
 	}
-	
 }
+
+
+
+
+

@@ -2,10 +2,11 @@ import {SVG_NS } from '../settings';
 
 
 export default class Score {
-  constructor(x, y, size) {
+  constructor(x, y, size, fill) {
     this.x = x;
     this.y = y;
     this.size = size;
+    this.fill = fill;
   }
   
   
@@ -18,7 +19,7 @@ export default class Score {
     text.setAttributeNS(null, 'y', this.y);
     text.setAttributeNS(null, 'font-family', 'Silkscreen Web');
     text.setAttributeNS(null, 'font-size', this.size);
-    text.setAttributeNS(null, 'fill', '#ffffff');
+    text.setAttributeNS(null, 'fill', this.fill);
     
     text.innerHTML = score;
     svg.appendChild(text);

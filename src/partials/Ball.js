@@ -81,12 +81,8 @@ export default class Ball {
     } 
   }
   
-  goal(winner) {
-    winner.score++;
-    if(winner.score >= 10){
-      winner.score = 0;
-      
-    }
+  goal(player) {
+    player.score++;
     this.reset();
   }
   
