@@ -1,8 +1,9 @@
 import { SVG_NS } from '../settings.js'
 
 export default class Ball {
-  constructor(radius, boardWidth, boardHeight) {
+  constructor(radius, fill, boardWidth, boardHeight) {
     this.radius = radius;
+    this.fill = fill;
     this.boardWidth = boardWidth;
     this.boardHeight = boardHeight;
     this.direction = 1;
@@ -80,11 +81,14 @@ export default class Ball {
     } 
   }
   
-  goal(player){
-    player.score++;
+  goal(winner) {
+    winner.score++;
+    if(winner.score >= 10){
+      winner.score = 0;
+      
+    }
     this.reset();
   }
-  
   
   
   
@@ -98,7 +102,7 @@ export default class Ball {
     
     let ball = document.createElementNS(SVG_NS, 'circle');
     ball.setAttributeNS(null, 'r', this.radius);
-    ball.setAttributeNS(null, 'fill', 'green');
+    ball.setAttributeNS(null, 'fill', this.fill);
     ball.setAttributeNS(null, 'cx', this.x);
     ball.setAttributeNS(null, 'cy', this.y);
     svg.appendChild(ball);
