@@ -31,8 +31,8 @@ export default class Game {
 		this.ball3 = new Ball(20, 'red', this.width, this.height);
 		
 		
-		this.score1 = new Score(220, 20, 30, '#ffffff');
-		this.score2 = new Score(270, 20, 30, '#ffffff');
+		this.score1 = new Score(210, 20, 30, '#ffffff');
+		this.score2 = new Score(278, 20, 30, '#ffffff');
 		this.winner1 = new Score(110, 50, 30, 'red');
 		this.winner2 = new Score(110, 50, 30, 'blue');
 		
@@ -71,16 +71,41 @@ export default class Game {
 		this.ball.render(svg, this.one, this.two);
 		this.score1.render(svg, this.one.score);
 		this.score2.render(svg, this.two.score);
-		if(this.one.score > 4 && this.one.score < 9){
+		
+		//Add new balls
+		if(this.one.score > 5){
 			this.ball2.render(svg, this.one, this.two);
 		}
-		if (this.two.score > 3 && this.two.score < 7){
+		if (this.two.score > 7){
 			this.ball3.render(svg, this.one, this.two);
 		}
 		
+		//Shortens Paddles
+		if(this.one.score > 5){
+			this.one.height = this.paddleHeight - 10;
+		}  
+		if (this.one.score > 6){
+			this.one.height = this.paddleHeight - 15;
+		}  
+		if (this.one.score > 7){
+			this.one.height = this.paddleHeight - 20;
+		}
+		
+		if(this.two.score > 5){
+			this.two.height = this.paddleHeight - 10;
+		}  
+		if (this.two.score > 6){
+			this.two.height = this.paddleHeight - 15;
+		} 
+		if (this.two.score > 7 ){
+			this.two.height = this.paddleHeight - 20;
+		}
 		
 		
-		if (this.one.score === 10){
+		
+		
+		//Declare Winner
+		if (this.one.score >= 10){
 			this.one.score = 0;
 			this.two.score = 0;
 			this.winner1.render(svg, 'Winner: Player 1');
