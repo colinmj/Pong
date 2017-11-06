@@ -9,6 +9,7 @@ export default class Ball {
     this.direction = 1;
     this.ping = new Audio('public/sounds/pong-01.wav');
     
+    
     this.reset();
   }
   

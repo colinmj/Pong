@@ -11,6 +11,7 @@ export default class Game {
 		this.element = element;
 		this.width = width;
 		this.height = height;
+		this.gameEnd = new Audio('public/sounds/pong-04.wav')
 		
 		
 		this.gameElement = document.getElementById(element);
@@ -105,10 +106,11 @@ export default class Game {
 		
 		
 		//Declare Winner
-		if (this.one.score >= 10){
+		if (this.one.score === 10){
 			this.one.score = 0;
 			this.two.score = 0;
 			this.winner1.render(svg, 'Winner: Player 1');
+			this.gameEnd.play();
 			this.pause = true;
 			this.one = new Paddle(this.height, this.paddleWidth, this.paddleHeight, this.boardGap, this.height/2 - 28, KEYS.a, KEYS.z);
 			this.two = new Paddle(this.height, this.paddleWidth, this.paddleHeight, (this.width - this.boardGap - this.paddleWidth), this.height/2 - 28, KEYS.up, KEYS.down);
@@ -116,6 +118,7 @@ export default class Game {
 			this.one.score = 0;
 			this.two.score = 0;
 			this.winner2.render(svg, 'Winner: Player 2');
+			this.gameEnd.play();
 			this.pause = true;
 			this.one = new Paddle(this.height, this.paddleWidth, this.paddleHeight, this.boardGap, this.height/2 - 28, KEYS.a, KEYS.z);
 			this.two = new Paddle(this.height, this.paddleWidth, this.paddleHeight, (this.width - this.boardGap - this.paddleWidth), this.height/2 - 28, KEYS.up, KEYS.down);
